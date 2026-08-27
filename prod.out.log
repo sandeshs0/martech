@@ -1,0 +1,9 @@
+
+> martech-ai@0.1.0 start
+> next start -p 3009
+
+▲ Next.js 16.3.0
+- Local:         http://localhost:3009
+- Network:       http://192.168.247.1:3009
+✓ Ready in 253ms
+✓ Running next.config.ts took 53ms

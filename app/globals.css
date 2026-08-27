@@ -1,26 +1,264 @@
 @import "tailwindcss";
 
+/*
+ * Modern, quiet UI: hairline borders, one blue, colour used only for meaning.
+ * The only playful element is the button, which keeps a chunky pressable
+ * bottom edge.
+ *
+ * Theming: the light palette is defined on bare :root. Dark is applied twice —
+ * once under prefers-color-scheme for viewers who never touch the toggle, and
+ * once under [data-theme="dark"] so the toggle wins in both directions.
+ */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+  --canvas: #f7f8fa;
+  --card: #ffffff;
+  --ink: #0b0d12;
+  --ink-soft: #626a78;
+  --ink-faint: #99a1b0;
+  --line: #e4e7ec;
+  --line-strong: #d0d5dd;
+  --blue: #2563eb;
+  --blue-deep: #1a48b8;
+  --blue-soft: #eff4ff;
+  --amber: #b54708;
+  --amber-soft: #fffaeb;
+  --green: #067647;
+  --green-soft: #ecfdf3;
+  --red: #b42318;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* The architecture canvas sits a step back from cards so nodes read as
+     objects on a surface rather than blending into the page. */
+  --map-bg: #eceff5;
+  --map-dot: #c8cedb;
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  :root:not([data-theme="light"]) {
+    --canvas: #0d1117;
+    --card: #161b22;
+    --ink: #e6edf3;
+    --ink-soft: #9aa4b2;
+    --ink-faint: #6e7781;
+    --line: #232b36;
+    --line-strong: #364150;
+    --blue: #5b86ff;
+    --blue-deep: #2f55c4;
+    --blue-soft: #16203a;
+    --amber: #e3a008;
+    --amber-soft: #241d0c;
+    --green: #3fb950;
+    --green-soft: #0e2a1a;
+    --red: #f85149;
+
+    --map-bg: #0a0e14;
+    --map-dot: #232b36;
+  }
+}
+
+:root[data-theme="dark"] {
+  --canvas: #0d1117;
+  --card: #161b22;
+  --ink: #e6edf3;
+  --ink-soft: #9aa4b2;
+  --ink-faint: #6e7781;
+  --line: #232b36;
+  --line-strong: #364150;
+  --blue: #5b86ff;
+  --blue-deep: #2f55c4;
+  --blue-soft: #16203a;
+  --amber: #e3a008;
+  --amber-soft: #241d0c;
+  --green: #3fb950;
+  --green-soft: #0e2a1a;
+  --red: #f85149;
+
+  --map-bg: #0a0e14;
+  --map-dot: #232b36;
+}
+
+@theme inline {
+  --color-canvas: var(--canvas);
+  --color-card: var(--card);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-ink-faint: var(--ink-faint);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-blue: var(--blue);
+  --color-blue-deep: var(--blue-deep);
+  --color-blue-soft: var(--blue-soft);
+  --color-amber: var(--amber);
+  --color-amber-soft: var(--amber-soft);
+  --color-green: var(--green);
+  --color-green-soft: var(--green-soft);
+  --color-red: var(--red);
+  --color-map-bg: var(--map-bg);
+  --font-sans: var(--font-satoshi);
+  --font-display: var(--font-clash);
+  --font-mono: var(--font-geist-mono);
+}
+
+html {
+  color-scheme: light;
+}
+
+html[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme="light"]) {
+    color-scheme: dark;
   }
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--canvas);
+  color: var(--ink);
+  font-family: var(--font-satoshi), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/*
+ * Clash Display is the display face: headings, section titles, and numerals.
+ * It is never used for body copy — it is too tightly spaced to read in
+ * paragraphs, which is exactly what makes it work as a heading.
+ */
+.font-display {
+  font-family: var(--font-clash), var(--font-satoshi), system-ui, sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-clash), var(--font-satoshi), system-ui, sans-serif;
+  letter-spacing: -0.015em;
+}
+
+/* --- the one playful element ------------------------------------------ */
+
+.duo-btn {
+  border-radius: 12px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  transition:
+    transform 60ms ease-out,
+    box-shadow 60ms ease-out,
+    filter 120ms ease-out;
+}
+
+.duo-btn:not(:disabled):hover {
+  filter: brightness(1.06);
+}
+
+.duo-btn:not(:disabled):active {
+  transform: translateY(4px);
+  box-shadow: none !important;
+}
+
+.duo-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.duo-btn:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 3px;
+}
+
+/* --- small shared bits ------------------------------------------------- */
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  box-shadow: 0 1px 2px rgba(11, 13, 18, 0.04);
+}
+
+:root[data-theme="dark"] .card,
+:root:not([data-theme="light"]) .card {
+  box-shadow: none;
+}
+
+.eyebrow {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+/* Tabular numerals stop metrics from jittering as durations tick up. */
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+.scroll-thin {
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-strong) transparent;
+}
+
+@keyframes shimmer {
+  from {
+    background-position: -200% 0;
+  }
+  to {
+    background-position: 200% 0;
+  }
+}
+
+.bar-running {
+  background-image: linear-gradient(90deg, var(--blue-soft), var(--blue), var(--blue-soft));
+  background-size: 200% 100%;
+  animation: shimmer 1.2s linear infinite;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.fade-up {
+  animation: fade-up 220ms ease-out both;
+}
+
+/* --- React Flow overrides ---------------------------------------------- */
+
+.react-flow__renderer,
+.react-flow__pane {
+  background: var(--map-bg);
+}
+
+.react-flow__controls-button {
+  background: var(--card);
+  border-bottom: 1px solid var(--line);
+  fill: var(--ink-soft);
+}
+
+.react-flow__controls-button:hover {
+  background: var(--canvas);
+}
+
+.react-flow__minimap {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+
+.react-flow__edge-text {
+  fill: var(--ink-soft);
+}
+
+.react-flow__attribution {
+  background: transparent;
+  color: var(--ink-faint);
 }
